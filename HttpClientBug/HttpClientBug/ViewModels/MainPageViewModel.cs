@@ -1,6 +1,7 @@
 ﻿using HttpClientBug.Interfaces;
 using HttpClientBug.Models;
 using HttpClientBug.Services;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,15 +18,18 @@ namespace HttpClientBug.ViewModels
         public ObservableCollection<WeatherForecast> WeatherForecasts { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public MainPageViewModel()
+        public MainPageViewModel() : this(App.ServiceProvider.GetRequiredService<IHttpClientUsingService>())
         {
-            HttpClientUsingService = new HttpClientUsingService();
-
             GetWeatherCommand = new Command(GetWeather);
 
             WeatherForecasts = new ObservableCollection<WeatherForecast>();
 
             GetWeather();
+        }
+
+        public MainPageViewModel(IHttpClientUsingService httpClientUsingService)
+        {
+            HttpClientUsingService = httpClientUsingService;
         }
 
         private async void GetWeather()

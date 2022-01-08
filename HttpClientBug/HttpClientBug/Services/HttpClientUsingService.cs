@@ -12,20 +12,22 @@ namespace HttpClientBug.Services
 {
     internal class HttpClientUsingService : IHttpClientUsingService
     {
-        HttpClient Client { get; set; }
+        public IHttpClientFactory HttpClientFactory { get; set; }
 
-        public HttpClientUsingService()
+        public HttpClientUsingService(IHttpClientFactory httpClientFactory)
         {
-            Client = new HttpClient();
+            HttpClientFactory = httpClientFactory;
         }
 
         public async Task<IEnumerable<WeatherForecast>> GetWeather()
         {
             try
             {
+                var httpClient = HttpClientFactory.CreateClient();
+
                 Uri uri = new Uri($"{ApiConstants.Host}/{ApiConstants.ApiBase}");
 
-                HttpResponseMessage result = await Client.GetAsync(uri);
+                HttpResponseMessage result = await httpClient.GetAsync(uri);
 
                 if (result.IsSuccessStatusCode)
                 {
